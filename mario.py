@@ -120,14 +120,17 @@ class Cloud(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        rand = randint(0, 1)
+        rand = randint(0, 2)
         if rand == 0:
-            self.image = pygame.transform.scale(pygame.image.load('cloud.png'), (90, 70))
+            self.image = pygame.transform.scale(pygame.image.load('cloud.png'), (100, 70))
         elif rand == 1:
-            self.image = pygame.transform.scale(pygame.image.load('dcloud.png'), (150, 70))
+            self.image = pygame.transform.scale(pygame.image.load('dcloud.png'), (170, 70))
+        elif rand == 2:
+            self.image = pygame.transform.scale(pygame.image.load('tcloud.png'), (260, 70))
         self.image.set_colorkey(WHITE) 
         self.rect = self.image.get_rect()
         self.velocity = 0
+        
 
     def update(self):
         self.rect.move_ip((-self.velocity, 0))
