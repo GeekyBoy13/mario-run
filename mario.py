@@ -105,7 +105,7 @@ class Projectile(pygame.sprite.Sprite):
         rand = randint(0, 1)
         if rand == 0:
             self.image = pygame.transform.scale(pygame.image.load('arrow.png'), (60, 15))
-        if rand == 1:
+        elif rand == 1:
             self.image = pygame.transform.scale(pygame.image.load('bullet.png'), (60, 40))
         self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
@@ -115,8 +115,24 @@ class Projectile(pygame.sprite.Sprite):
         self.rect.move_ip((-self.velocity, 0))
         if self.rect.right <= 0:
             self.kill()
-    
-    
+
+class Cloud(pygame.sprite.Sprite):
+
+    def __init__(self):
+        super().__init__()
+        rand = randint(0, 1)
+        if rand == 0:
+            self.image = pygame.transform.scale(pygame.image.load('cloud.png'), (90, 70))
+        elif rand == 1:
+            self.image = pygame.transform.scale(pygame.image.load('dcloud.png'), (150, 70))
+        self.image.set_colorkey(WHITE) 
+        self.rect = self.image.get_rect()
+        self.velocity = 0
+
+    def update(self):
+        self.rect.move_ip((-self.velocity, 0))
+        if self.rect.right <= 0:
+            self.kill()
         
 pygame.mixer.music.load('music.wav')
 pygame.mixer.music.play(loops= -1)
@@ -128,9 +144,12 @@ BGrect.y = 0
 mario = Mario()
 mario.rect.x = 90
 mario.rect.y = 360
-CREATECACTUS = pygame.USEREVENT + 1
-pygame.time.set_timer(CREATECACTUS, 3500)
+CREATEOBSTACLE = pygame.USEREVENT + 1
+pygame.time.set_timer(CREATEOBSTACLE, 3500)
+CREATECLOUD = pygame.USEREVENT + 2
+pygame.time.set_timer(CREATECLOUD, 3000)
 all_sprites = pygame.sprite.Group()
+all_clouds = pygame.sprite.Group()
 cmario = CMario()
 cmario.rect.x = 90
 cmario.rect.y = 380
@@ -149,7 +168,7 @@ while carryOn:
         elif event.type==pygame.KEYDOWN:
             if event.key==pygame.K_x: #Pressing the x Key will quit the game
                 carryOn=False
-        if event.type == CREATECACTUS:
+        if event.type == CREATEOBSTACLE:
             ram = randint(0, 7)
             if ram < 3:
                 new_cactus = Shell()
@@ -170,8 +189,18 @@ while carryOn:
                 new_cactus.rect.left = 700
                 new_cactus.rect.bottom = 370
                 all_sprites.add(new_cactus)
-            rand = randint(700, 2500)
-            pygame.time.set_timer(CREATECACTUS, rand)
+            rand = randint(700, 2000)
+            pygame.time.set_timer(CREATEOBSTACLE, rand)
+        if event.type == CREATECLOUD:
+            veloc = randint(1, 3)
+            ycor = randint(0, 150)
+            new_cloud = Cloud()
+            new_cloud.velocity = veloc
+            new_cloud.rect.x = 700
+            new_cloud.rect.y = ycor
+            all_clouds.add(new_cloud)
+            rund = randint(2500, 3500)
+            pygame.time.set_timer(CREATECLOUD, rund)
     screen.fill(WHITE)
     screen.blit(BG, BGrect)
     if not keys[pygame.K_DOWN] or mario.rect.bottom < 440:
@@ -203,6 +232,9 @@ while carryOn:
     textRect.x = 0
     textRect.y = 0
     screen.blit(text, textRect)
+    for sprite in all_clouds:
+        sprite.update()
+        screen.blit(sprite.image, sprite.rect)
     if pygame.sprite.spritecollideany(mario, all_sprites) and stand == True:
         carryOn = False
     elif pygame.sprite.spritecollideany(cmario, all_sprites) and crouch == True:
@@ -217,12 +249,15 @@ death = 1
 click = pygame.time.Clock()
 while True:
     screen.blit(BG, BGrect)
+    screen.blit(text, textRect)
     if death == 1:
         mario.die(True)
     else:
         mario.die(False)
     for sprite in all_sprites:
         screen.blit(sprite.image, sprite.rect)
+    for sprite in all_clouds:
+        screen.blit(sprite.image, sprite.rect)   
     screen.blit(mario.image, mario.rect)
     pygame.display.update()
     death += 1
@@ -237,7 +272,7 @@ while True:
     gmovrect = gmov.get_rect()
     gmovrect.x = 210
     gmovrect.y = 230
-    scor = font.render("SCORE: " + score, True, WHITE)
+    scor = font.render("SCORE:" + score, True, WHITE)
     scorect = scor.get_rect()
     scorect.x = 210
     scorect.y = 180
