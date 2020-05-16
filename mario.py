@@ -165,11 +165,11 @@ stand = True
 crouch = False
 while carryOn:
     keys = pygame.key.get_pressed()
-    for event in pygame.event.get(): # User did something
-        if event.type == pygame.QUIT: # If user clicked close
-            carryOn = False # Flag that we are done so we exit this loop
+    for event in pygame.event.get(): 
+        if event.type == pygame.QUIT:
+            carryOn = False 
         elif event.type==pygame.KEYDOWN:
-            if event.key==pygame.K_x: #Pressing the x Key will quit the game
+            if event.key==pygame.K_x: 
                 carryOn=False
         if event.type == CREATEOBSTACLE:
             ram = randint(0, 7)
@@ -217,7 +217,7 @@ while carryOn:
         crouch = True
     if stand == True and mario.rect.bottom < 440:
         mario.image = pygame.transform.scale(pygame.image.load('jmario.png'), (70, 80))
-        mario.rect.x = 80
+        mario.rect.x = 75
     elif stand == True and mario.rect.bottom >= 440:
         mario.image = pygame.transform.scale(pygame.image.load('mario.png'), (60, 80))
         mario.rect.x = 90
